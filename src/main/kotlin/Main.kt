@@ -45,14 +45,15 @@ object WallService {
         return posts[postUniqueId - 1]
     }
 
-    fun update(post: Post): Boolean {
-        val checkedId = post.id
-        for ((index, post) in posts.withIndex())
-            if (checkedId == post.id) {
+    fun update(newpost: Post): Boolean {
+        val checkedId = newpost.id
+           for ((index, post) in posts.withIndex()) {
+               if (checkedId == post.id) {
+                   posts[index] = newpost.copy(99, 99, 99, 99999, "new post", false, false, false, false, Likes)
+                   return true
+               }
+           }
 
-                posts[index] = post.copy(99, 99, 99, 99999, "new post", false, false, false, false, Likes)
-                return true
-            }
         return false
     }
 
@@ -71,7 +72,7 @@ fun main() {
     val post3 = Post(3, 33, 70, 1685030717, "Привет, Мир3!", true, true, false, false, like1)
     val post4 = Post(4, 34, 80, 1685030717, "Привет, Мир4!", true, true, false, false, like1)
 
-    val postTest = Post(2, 34, 80, 1685030717, "Привет, Мир4!", true, true, false, false, like1)
+    val postTest = Post(3, 34, 80, 1685030717, "Привет, Мир4!", true, true, false, false, like1)
 
     WallService.add(post1)
     WallService.add(post2)
@@ -83,6 +84,8 @@ fun main() {
     println(posts.joinToString())
     println("#############")
     WallService.update(postTest)
+
     println(posts.joinToString())
+    println(WallService.update(postTest))
 
 }
