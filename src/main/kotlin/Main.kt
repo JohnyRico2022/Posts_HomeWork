@@ -11,13 +11,7 @@ data class Post(
     val canEdit: Boolean, //Информация, может ли текущий пользователь редактировать запись
     val isFavorite: Boolean, //Добавлен ли объект в закладки у текущего пользователя
     val likes: Likes
-) {
-
-    operator fun set(index: Int, value: Post) {
-        posts[index] = value
-    }
-}
-
+)
 
 object Likes {
     val count: Int = 0  // число пользователей которым понравилась запись
@@ -35,7 +29,7 @@ object Likes {
 object WallService {
 
     private var postId: Int = 0
-    var posts = emptyArray<Post>()
+    private var posts = emptyArray<Post>()
 
     fun add(post: Post): Post {
 
@@ -47,12 +41,12 @@ object WallService {
 
     fun update(newpost: Post): Boolean {
         val checkedId = newpost.id
-           for ((index, post) in posts.withIndex()) {
-               if (checkedId == post.id) {
-                   posts[index] = newpost.copy(99, 99, 99, 99999, "new post", false, false, false, false, Likes)
-                   return true
-               }
-           }
+        for ((index, post) in posts.withIndex()) {
+            if (checkedId == post.id) {
+                posts[index] = newpost.copy(99, 99, 99, 99999, "new post", false, false, false, false, Likes)
+                return true
+            }
+        }
 
         return false
     }
@@ -60,8 +54,15 @@ object WallService {
     fun clear() {
         posts = emptyArray()
     }
-}
 
+    fun print() {
+        println(posts.joinToString())
+    }
+
+    operator fun set(index: Int, value: Post) {
+        posts[index] = value
+    }
+}
 
 fun main() {
 
@@ -72,20 +73,17 @@ fun main() {
     val post3 = Post(3, 33, 70, 1685030717, "Привет, Мир3!", true, true, false, false, like1)
     val post4 = Post(4, 34, 80, 1685030717, "Привет, Мир4!", true, true, false, false, like1)
 
-    val postTest = Post(3, 34, 80, 1685030717, "Привет, Мир4!", true, true, false, false, like1)
+    val postTest = Post(1, 34, 80, 1685030717, "Привет, Мир4!", true, true, false, false, like1)
 
     WallService.add(post1)
     WallService.add(post2)
     WallService.add(post3)
     WallService.add(post4)
 
-    println("Размер массива с постами : ${WallService.posts.size}")
-    println("************")
-    println(posts.joinToString())
+    WallService.print()
     println("#############")
-    WallService.update(postTest)
-
-    println(posts.joinToString())
     println(WallService.update(postTest))
+    WallService.print()
+
 
 }
