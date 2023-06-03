@@ -53,6 +53,7 @@ object WallService {
 
     fun clear() {
         posts = emptyArray()
+        postId = 0
     }
 
     fun print() {
