@@ -1,4 +1,4 @@
-import WallService.posts
+import WallService.postId
 
 data class Post(
     val id: Int, // Идентификатор записи
@@ -142,10 +142,39 @@ data class GraffitiAttachment(val grafiti: Graffiti) : Attachment {
 }
 
 
+data class Comment(
+    val id: Int, //Идентификатор комментария
+    val fromId: Int, //Идентификатор автора Комментария
+    val date: Int, //Дата создания комментария в формате unixtime
+    val text: String, //текст комментария
+    val donut: Donat,
+    val replyToUser: Int, //Идентификатор пользователя или сообщества, в ответ которому оставлен текущий комментарий (если применимо)
+    val replyToComment: Int, //Идентификатор комментария, в ответ на который оставлен текущий (если применимо)
+    val thread: Thread //Информация о вложенной ветке комментариев
+)
+
+object Donat{
+    val isDon: Boolean = false //является ли комментатор подписчиком VK Donut
+    val placeholder: String = "Заглушка" // Заглушка для пользователей которые не оформили подписку
+}
+
+object Thread{
+    val count: Int = 0 //количество комментариев в ветке.
+    val canPost: Boolean = true // может ли текущий пользователь оставлять комментарии в этой ветке.
+    val showReplyButton: Boolean = true //нужно ли отображать кнопку «ответить» в ветке.
+    val groupsCanPost: Boolean = true//могут ли сообщества оставлять комментарии в ветке.
+}
+
+class PostNotFoundException(message: String): RuntimeException(message)
+
+
+
 object WallService {
 
-    private var postId: Int = 0
+    var postId: Int = 0
     var posts = emptyArray<Post>()
+    var comments = emptyArray<Comment>()
+
 
     fun add(post: Post): Post {
 
@@ -160,33 +189,7 @@ object WallService {
         for ((index, post) in posts.withIndex())
             if (checkedId == post.id) {
 
-                posts[index] = newpost.copy(
-                    77,
-                    21,
-                    33,
-                    66,
-                    1685030715,
-                    "Пост Тест",
-                    55,
-                    58,
-                    true,
-                    Comments,
-                    " 1234",
-                    Likes,
-                    Reposts,
-                    Views,
-                    "qwe",
-                    PostSource,
-                    Geo,
-                    33,
-                    true,
-                    true,
-                    true,
-                    true,
-                    true,
-                    true,
-                    88
-                )
+                posts[index] = newpost.copy(77, 21, 33, 66, 1685030715, "Пост Тест", 55, 58, true, Comments, " 1234", Likes, Reposts, Views, "qwe", PostSource, Geo, 33, true, true, true, true, true, true, 88)
                 return true
             }
         return false
@@ -204,10 +207,26 @@ object WallService {
     fun print() {
         println(posts.joinToString())
     }
+
+    fun createComment(postId: Int, comment: Comment): Comment? {
+        for(post in posts)
+            if(post.id == postId){
+                comments += comment
+                return comment
+            }
+
+        return null
+
+
+    }
+
+
 }
 
 
 fun main() {
+
+    val service = WallService
 
     val comments = Comments
     val likes = Likes
@@ -215,153 +234,24 @@ fun main() {
     val views = Views
     val postSource = PostSource
     val geo = Geo
+    val donat1 = Donat
+    val thread1 = Thread
 
-    val post1 = Post(
-        1,
-        21,
-        33,
-        66,
-        1685030715,
-        "Пост 1",
-        55,
-        58,
-        true,
-        comments,
-        " 1234",
-        likes,
-        reposts,
-        views,
-        "qwe",
-        postSource,
-        geo,
-        33,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        88
-    )
-    val post2 = Post(
-        2,
-        21,
-        33,
-        66,
-        1685030715,
-        "Пост 2",
-        55,
-        58,
-        true,
-        comments,
-        " 1234",
-        likes,
-        reposts,
-        views,
-        "qwe",
-        postSource,
-        geo,
-        33,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        88
-    )
-    val post3 = Post(
-        3,
-        21,
-        33,
-        66,
-        1685030715,
-        "Пост 3",
-        55,
-        58,
-        true,
-        comments,
-        " 1234",
-        likes,
-        reposts,
-        views,
-        "qwe",
-        postSource,
-        geo,
-        33,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        88
-    )
-    val post4 = Post(
-        4,
-        21,
-        33,
-        66,
-        1685030715,
-        "Пост 4",
-        55,
-        58,
-        true,
-        comments,
-        " 1234",
-        likes,
-        reposts,
-        views,
-        "qwe",
-        postSource,
-        geo,
-        33,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        88
-    )
+    val post1 = Post(1, 21, 33, 66, 1685030715, "Пост 1", 55, 58, true, comments, " 1234", likes, reposts, views, "qwe", postSource, geo, 33, true, true, true, true, true, true, 88)
+    val post2 = Post(2, 21, 33, 66, 1685030715, "Пост 2", 55, 58, true, comments, " 1234", likes, reposts, views, "qwe", postSource, geo, 33, true, true, true, true, true, true, 88)
+    val post3 = Post(3, 21, 33, 66, 1685030715, "Пост 3", 55, 58, true, comments, " 1234", likes, reposts, views, "qwe", postSource, geo, 33, true, true, true, true, true, true, 88)
+    val post4 = Post(4, 21, 33, 66, 1685030715, "Пост 4", 55, 58, true, comments, " 1234", likes, reposts, views, "qwe", postSource, geo, 33, true, true, true, true, true, true, 88)
+    val postTest = Post(1, 21, 33, 66, 1685030715, "Пост Тест", 55, 58, true, comments, " 1234", likes, reposts, views, "qwe", postSource, geo, 33, true, true, true, true, true, true, 88)
 
-    val postTest = Post(
-        1,
-        21,
-        33,
-        66,
-        1685030715,
-        "Пост Тест",
-        55,
-        58,
-        true,
-        comments,
-        " 1234",
-        likes,
-        reposts,
-        views,
-        "qwe",
-        postSource,
-        geo,
-        33,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        88
-    )
-
-    WallService.add(post1)
-    WallService.add(post2)
-    WallService.add(post3)
-    WallService.add(post4)
+    val commentTest = Comment(7,55,161855445,"Комментарий1", donat1, 88, 99, thread1)
 
 
-    WallService.print()
-    println("#############")
-    println(WallService.update(postTest))
-    WallService.print()
+    service.add(post1)
+    service.add(post2)
+    service.add(post3)
+    service.add(post4)
 
+    val postId = 2
+    val createCom = service.createComment(postId, commentTest) ?: throw PostNotFoundException("No Post with id: $postId")
+    println(createCom)
 }
