@@ -208,6 +208,7 @@ object WallService {
         println(posts.joinToString())
     }
 
+    @Throws(PostNotFoundException::class)
     fun createComment(postId: Int, comment: Comment): Comment? {
         for(post in posts)
             if(post.id == postId){
@@ -215,7 +216,7 @@ object WallService {
                 return comment
             }
 
-        return null
+        throw PostNotFoundException("No Post with id: $postId")
 
 
     }
@@ -251,7 +252,7 @@ fun main() {
     service.add(post3)
     service.add(post4)
 
-    val postId = 2
-    val createCom = service.createComment(postId, commentTest) ?: throw PostNotFoundException("No Post with id: $postId")
+    val postId = 3
+    val createCom = service.createComment(postId, commentTest)
     println(createCom)
 }
